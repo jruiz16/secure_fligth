@@ -17,6 +17,7 @@ exports.obtenerUsuarios = async (req, res) => {
         
         res.send(usuarios);
     } catch (error) {
+        return res.status(401).json({ mensaje: 'Se ha presentado un error al consultar los usuarios' });
         console.log(error);
     }
 
