@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: express-app-deployment
+  namespace: secure-fligth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: express-app
+  template:
+    metadata:
+      labels:
+        app: express-app
+    spec:
+      containers:
+        - name: express-app
+          image: prueba_login:latest
+          ports:
+            - containerPort: 8083  # Puerto en el que tu aplicación Express escucha dentro del contenedor
+          env:
+            - name: NODE_ENV
+              value: develop  # Establece el entorno de ejecución como producción
+            - name: MYSQL_HOST
+              value: mysql-service  # Nombre del Service de MySQL dentro del clúster
+            - name: MYSQL_USER
+              value: "root"  # Nombre de usuario para la conexión a MySQL
+            - name: MYSQL_PASSWORD
+              value: "root"  # Contraseña para la conexión a MySQL
+          imagePullPolicy: Always
+      imagePullSecrets:  # Especifica el secreto de autenticación para la imagen
+        - name: regcred
