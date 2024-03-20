@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql-deployment
-  namespace: secure-fligth
+  namespace: secure-flight
 spec:
   replicas: 1
   selector:
@@ -13,17 +13,24 @@ spec:
       labels:
         app: mysql
     spec:
+      volumes:
+        - name: mysql-config
+          configMap:
+            name: mysql-config
+        - name: mysql-init-script
+          configMap:
+            name: mysql-init-script
       containers:
         - name: mysql
-          image: mysql:latest
+          image: mysql:5.6
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
-            - name: MYSQL_DATABASE
-              value: "securefligth"
-            - name: MYSQL_USER
-              value: "admin"
-            - name: MYSQL_PASSWORD
-              value: "root"
           ports:
             - containerPort: 3306
+          volumeMounts:
+            - name: mysql-config
+              mountPath: /etc/mysql/mysql.conf.d
+            - name: mysql-init-script
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true

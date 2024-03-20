@@ -2,8 +2,97 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mysql-config
-  namespace: secure-fligth
+  namespace: secure-flight
 data:
   mysql.cnf: |
     [mysqld]
     bind-address = 0.0.0.0
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-script
+  namespace: secure-flight
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS prueba;
+    GRANT ALL PRIVILEGES ON prueba.* TO 'admin'@'%' IDENTIFIED BY 'root';
+
+    -- Usar la base de datos "prueba"
+    USE prueba;
+
+    -- Crear la tabla personas si no existe
+    CREATE TABLE IF NOT EXISTS personas (
+      id_persona INT AUTO_INCREMENT PRIMARY KEY,
+      nombre VARCHAR(255),
+      apellido VARCHAR(255),
+      email VARCHAR(255),
+      telefono VARCHAR(255),
+      created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    -- Crear la tabla usuarios si no existe
+    CREATE TABLE IF NOT EXISTS usuarios (
+      id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+      id_persona INT,
+      nombre_usuario VARCHAR(255),
+      clave_encriptada VARCHAR(255),
+      estado VARCHAR(255),
+      created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );
+
+    -- Insertar datos en la tabla personas si no existen
+    INSERT INTO personas (nombre, apellido, email, telefono) SELECT * FROM (
+        SELECT 'Nombre1' as nombre, 'Apellido1' as apellido, 'email1@example.com' as email, '123456789' as telefono
+        UNION ALL
+        SELECT 'Nombre2', 'Apellido2', 'email2@example.com', '987654321' 
+        UNION ALL
+        SELECT 'Nombre3', 'Apellido3', 'email3@example.com', '456789123' 
+        UNION ALL
+        SELECT 'Nombre4', 'Apellido4', 'email4@example.com', '789123456' 
+        UNION ALL
+        SELECT 'Nombre5', 'Apellido5', 'email5@example.com', '321654987' 
+        UNION ALL
+        SELECT 'Nombre6', 'Apellido6', 'email6@example.com', '159753468' 
+        UNION ALL
+        SELECT 'Nombre7', 'Apellido7', 'email7@example.com', '246813579' 
+        UNION ALL
+        SELECT 'Nombre8', 'Apellido8', 'email8@example.com', '369258147' 
+        UNION ALL
+        SELECT 'Nombre9', 'Apellido9', 'email9@example.com', '582417936' 
+        UNION ALL
+        SELECT 'Nombre10', 'Apellido10', 'email10@example.com', '741852963'
+    ) AS tmp
+    WHERE NOT EXISTS (
+        SELECT 1 FROM personas p
+        WHERE p.nombre = tmp.nombre AND p.apellido = tmp.apellido AND p.email = tmp.email AND p.telefono = tmp.telefono
+    );
+
+    -- Insertar datos en la tabla usuarios si no existen
+    INSERT INTO usuarios (id_persona, nombre_usuario, clave_encriptada, estado) SELECT * FROM (
+        SELECT 1 as id_persona, 'usuario1' as nombre_usuario, 'clave1' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 2 as id_persona, 'usuario2' as nombre_usuario, 'clave2' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 3 as id_persona, 'usuario3' as nombre_usuario, 'clave3' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 4 as id_persona, 'usuario4' as nombre_usuario, 'clave4' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 5 as id_persona, 'usuario5' as nombre_usuario, 'clave5' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 6 as id_persona, 'usuario6' as nombre_usuario, 'clave6' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 7 as id_persona, 'usuario7' as nombre_usuario, 'clave7' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 8 as id_persona, 'usuario8' as nombre_usuario, 'clave8' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 9 as id_persona, 'usuario9' as nombre_usuario, 'clave9' as clave_encriptada, 'activo' as estado
+        UNION ALL
+        SELECT 10 as id_persona, 'usuario10' as nombre_usuario, 'clave10' as clave_encriptada, 'activo' as estado
+    ) AS tmp
+    WHERE NOT EXISTS (
+        SELECT 1 FROM usuarios
+        WHERE nombre_usuario = tmp.nombre_usuario
+    );

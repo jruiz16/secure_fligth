@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: express-app-deployment
-  namespace: secure-fligth
+  namespace: secure-flight
 spec:
   replicas: 1
   selector:
@@ -15,9 +15,9 @@ spec:
     spec:
       containers:
         - name: express-app
-          image: prueba_login:latest
+          image: jeruiz16/back-secure-fligth
           ports:
-            - containerPort: 8083  # Puerto en el que tu aplicación Express escucha dentro del contenedor
+            - containerPort: 8081  # Puerto en el que tu aplicación Express escucha dentro del contenedor
           env:
             - name: NODE_ENV
               value: develop  # Establece el entorno de ejecución como producción
