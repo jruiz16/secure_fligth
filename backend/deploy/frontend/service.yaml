@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: express-app-service
+  name: front-app-service
   namespace: secure-flight
 spec:
   selector:
-    app: express-app
+    app: front-app
   ports:
     - protocol: TCP
-      port: 8083
-      targetPort: 8083
+      port: 8085
+      targetPort: 3000

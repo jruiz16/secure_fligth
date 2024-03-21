@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-app-deployment
+  namespace: secure-flight
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front-app
+  template:
+    metadata:
+      labels:
+        app: front-app
+    spec:
+      containers:
+        - name: front-app
+          image: jeruiz16/front-secure
+          ports:
+            - containerPort: 3000  # Puerto en el que tu aplicación Express escucha dentro del contenedor
+          # command: ["/bin/sh"]
+          # args: ["-c", "echo 'NEXT_PUBLIC_PUBLIC_API=$NEXT_PUBLIC_PUBLIC_API' > /app/.env"]
+          env:
+            - name: NEXT_PUBLIC_PUBLIC_API
+              valueFrom:
+                secretKeyRef:
+                  name: env-secret
+                  key: NEXT_PUBLIC_PUBLIC_API
+          imagePullPolicy: Always
+      imagePullSecrets:  # Especifica el secreto de autenticación para la imagen
+        - name: regcred
